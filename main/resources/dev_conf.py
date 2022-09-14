@@ -4,7 +4,9 @@ import configparser
 config = configparser.ConfigParser()
 # définir les sections et les clé/valeur
 
-pathBdd = "E:\Brook\BDD"
+
+#pathBdd = "E:\Brook\BDD" #Chemin Gab
+pathBdd = "C:/Users/tomvi/Brook/Brook/BDD" #Chemin Tom
 
 config["InstrumentPath"]={
     "rim" : pathBdd + "\_Rim"
