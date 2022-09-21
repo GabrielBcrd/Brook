@@ -5,10 +5,11 @@ config = configparser.ConfigParser()
 # définir les sections et les clé/valeur
 
 pathBdd = "E:\Brook\BDD"
+pathBddSample = "\Sample"
 
 config["InstrumentPath"]={
-    "rim" : pathBdd + "\_Rim",
-    "bass" : pathBdd + "\_Bass"
+    "rim" : pathBdd + pathBddSample + "\_Rim",
+    "closedHiHat" : pathBdd + pathBddSample + "\_HiHatClosed"
 }
 
 # Enregistrer le fichier de configuration
