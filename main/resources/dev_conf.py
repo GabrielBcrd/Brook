@@ -4,17 +4,11 @@ import configparser
 config = configparser.ConfigParser()
 # définir les sections et les clé/valeur
 
-
-#pathBdd = "E:\Brook\BDD" #Chemin Gab
-pathBdd = "C:/Users/tomvi/Brook/Brook/BDD" #Chemin Tom
+pathBdd = "E:\Brook\BDD"
 
 config["InstrumentPath"]={
-    "rim" : pathBdd + "\_Rim"
-}
-
-config["BddPath"]={
-    "Langage" : "Python",
-    "Langue" : "anglais"
+    "rim" : pathBdd + "\_Rim",
+    "bass" : pathBdd + "\_Bass"
 }
 
 # Enregistrer le fichier de configuration

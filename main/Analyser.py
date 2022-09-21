@@ -1,6 +1,10 @@
 from configparser import ConfigParser
 from logging import config
+from sqlite3 import TimeFromTicks
+from time import time_ns
+from timeit import timeit
 import wave
+from xmlrpc.client import DateTime
 
 import pygame
 import pandas as pd 
@@ -12,7 +16,9 @@ import librosa
 import librosa.display
 import IPython.display as ipd
 
-
+from datetime import datetime, time
+import time
+from datetime import datetime, date, time, timedelta
 
 fileConfig = ConfigParser()
 fileConfig.read('dev.application.conf')
@@ -21,47 +27,56 @@ def AnalyserDbMax(SampleArray):
     MaxDb = max(abs(SampleArray))
     return MaxDb
 
-def AnalyserRowNumDbMax(SampleArray):
-    a = pd.DataFrame(SampleArray)
-    RowNumMaxDb = a[a['0']==AnalyserDbMax(SampleArray)].index
-    return RowNumMaxDb
-    
-    
 def analyser(conf,instruName):
    
     
     pathSample = conf.get('InstrumentPath',instruName) + ""
-    print(pathSample)
-
     audio_files = glob(pathSample + '\*.wav')
-    print (audio_files)
-    #ipd.Audio(audio_files[0])
 
-    y, sr = librosa.load(audio_files[12])
+    y, sr = librosa.load(audio_files[0])
     print(AnalyserDbMax(y))
-    #print(AnalyserRowNumDbMax(y))
-    #print(sr)
-    print(librosa.get_duration(y=y, sr=sr))
-    df=pd.DataFrame(y)
-    a = AnalyserDbMax(y)
-    #print(df)
-    #print(a)
-    #print(df.loc[df['0']==a])
     
+    a = ((librosa.get_duration(y=y, sr=sr)))
+    print((a))
     
-    
-    
-    y_trimmed, _ = librosa.effects.trim(y,top_db=15)
+    #Séparation des sources harmoniques-percussives¶
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
 
-    pd.Series(y_trimmed).plot(figsize=(10,5),
+    pd.Series(y_percussive).plot(figsize=(10,5),
                       lw = 1,
                       title = "yoyo")
 
-    #plt.show()
-    
-    
 
+    pd.Series(y_harmonic).plot(figsize=(10,5),
+                      lw = 1,
+                      title = "yoyo")
+
+    plt.show()
+
+    librosa.feature.melspectrogram(y=y, sr=sr)
+
+    D = np.abs(librosa.stft(y))
+    S = librosa.feature.melspectrogram(S=D)
+    S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128,fmax=8000)
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(librosa.power_to_db(S,ref=np.max),y_axis='mel', fmax=8000,x_axis='time')
+    plt.colorbar(format='%+2.0f dB')
+    plt.title('Mel spectrogram')
+    plt.tight_layout()
+    plt.show()
+
+
+    pitches, magnitudes = librosa.piptrack(y=y, sr=sr, threshold=0.2)
+    print(pitches)
+    print('///')
+    print(magnitudes)
+    plt.subplot(212)
+    plt.plot(pitches)
+    plt.show()
+    plt.plot(magnitudes)
+    plt.show()
+    plt.imshow(pitches[:100, :], aspect="auto", interpolation="nearest")
+    plt.show()
 
 # Appel Fonction pour test
 analyser(fileConfig,'rim')
-
