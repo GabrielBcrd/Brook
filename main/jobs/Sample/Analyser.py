@@ -25,10 +25,7 @@ def AnalyserDbMax(SampleArray):
 
 def analyser(conf,instruName):
    
-    Fs = 88200 # sample rate
-    T = 1/Fs # sampling period
-    t = 0.1 # seconds of sampling
-    N = Fs*t # total points in signal
+    Fs = 44100 # sample rate
     
     pathSample = conf.get('InstrumentPath',instruName) + ""
     audio_files = glob(pathSample + '\*.wav')
@@ -55,23 +52,45 @@ def analyser(conf,instruName):
     plt.show()
 
 
-    #Mel Spectrogram -- Amplitude / Frequency / Time
-    D = np.abs(librosa.stft(y))**2
+    #Mel Spectrogram -- Amplitude    / Frequency / Time
+    D = np.abs(librosa.stft(y))**2 #Utiliser un spectre d'énergie (magnitude) au lieu d'un spectrogramme de puissance
     S = librosa.feature.melspectrogram(S=D, sr=Fs, n_mels=128,
-                                        fmax=20000)
+                                        fmax=50000)
+    plt.show()
     # Passing through arguments to the Mel filters
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(15,5))
     S_dB = librosa.power_to_db(S, ref=np.max)
+    
     img = librosa.display.specshow(S_dB, x_axis='time',
-                            y_axis='mel', sr=Fs,
-                            fmax=25000, ax=ax)
+                                y_axis='mel', sr=Fs,
+                                fmax=50000, ax=ax)
     fig.colorbar(img, ax=ax, format='%+2.0f dB')
     ax.set(title='Mel-frequency spectrogram')
     plt.show()
 
+    print(pathSample)
+    print(S)
+    
+    
 
+    
 
+    import csv
 
+    print("Un programme qui utilise csv.writer() pour écrire dans un fichier")
+    print("\n")
+    # Les données que nous allons écrire
+    dataDb = S_dB
+    dataAmp = D
+    # Ouvrir le fichier en mode écriture
+    fichier = open(conf.get('DSADataPath',instruName),'w')
+    print("Nous avons ouvert le fichier" +instruName+ ", s'il n'existe pas il sera créé ")
+    # Créer l'objet fichier
+    obj = csv.writer(fichier)
+    # Chaque élément de data correspond à une ligne
+    for element in dataDb, dataAmp:
+        obj.writerow(element)
+    fichier.close()
 
 
 
