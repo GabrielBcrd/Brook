@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from main.jobs.Sample.Sampler import writeSample, soundOcsNoise, soundOcsSub
+from Sampler import *
 
 # sampling information
 sr = 44100 # sample rate
@@ -21,10 +21,16 @@ writeSample(sr=sr,signal=signalNoise,path="signalNoise.wav")
 writeSample(sr=sr,signal=signalSub,path="signalSub.wav")
 
 #,attack=0.23,hold=0.56,decay=0.75,substain=-20,release=1
-""" signalEnvelop = soundEnvelopApply(signalSub)
+signalEnvelop = soundEnvelopApply(signalSub,sr,t,attack = 0.10,hold=0.30,decay=0.53,substain=0.00,release=0.83)
+
 plt.plot(t,signalEnvelop)
-plt.show() """
+plt.show()
+
+c = np.pi
+print(c) 
 
 #A mettre dans un nouveau fichier "SamplerGetParameters"
 def findEnvelopParameters(time_duration):
     print('TO DO')
+
+   

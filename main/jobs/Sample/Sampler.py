@@ -1,3 +1,5 @@
+from multiprocessing.dummy import Array
+from platform import release
 import numpy as np
 from scipy.io import wavfile
 from numpy import where
@@ -41,12 +43,37 @@ def soundOcsSub(x,case):
 def soundOcs():
     print("OSC")
 
-
-def soundEnvelopApply(Osc,attack,hold,decay,substain,release):
+#,attack,hold,decay,substain,release
+def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substain:float,release:float):
     print("ENV")
-    print(Osc)
-    attackApply = Osc #en sec ou ms
-    return attackApply
+    attackApply = np.where(t < attack, Osc * (t*(1/attack)),Osc)
+    holdApply = np.where((t > attack) & (t < hold), attackApply,attackApply)
+    
+    t3 = np.arange(0,(hold),(1.00/sr))
+    t4 = np.arange(0,decay-hold-0.000001,(1.00/sr))
+    t7 = np.arange(1,substain,-(1-substain)/t4.size)
+    t5 = np.arange(0,(1.00-decay),1.00/sr)
+    t6 = np.concatenate((t3,t7,t5),axis=0)
+    a = ((decay-hold)-0.000001)/(1/sr)
+    print(a)
+   
+
+
+    decayApply = np.where((t > hold) & (t < decay),
+                         holdApply*(t6),
+                         holdApply) 
+    
+    substainApply = np.where((t > attack) & (t > hold) & (t < decay) | (t >= decay),
+                         decayApply*substain,
+                         decayApply)
+    releaseApply = np.where((t < release) & (t > decay),
+                         substainApply * (t[::-1]*(1/(1-(release-decay)))),
+                         substainApply )
+
+    releasePostApply = np.where(t >= release,
+                         decayApply * 0,
+                         releaseApply )                                       
+    return releasePostApply 
     
 
 
