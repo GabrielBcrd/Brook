@@ -4,7 +4,7 @@ import configparser
 config = configparser.ConfigParser()
 # définir les sections et les clé/valeur
 
-pathBdd = "E:\Brook\BDD"
+pathBdd = "BDD"
 pathBddSample = "\Sample"
 pathBddDSA = "\DataStagingArea"
 

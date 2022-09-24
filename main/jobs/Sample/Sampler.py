@@ -49,30 +49,30 @@ def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substa
     attackApply = np.where(t < attack, Osc * (t*(1/attack)),Osc)
     holdApply = np.where((t > attack) & (t < hold), attackApply,attackApply)
     
-    t3 = np.arange(0,(hold),(1.00/sr))
-    t4 = np.arange(0,decay-hold-0.000001,(1.00/sr))
-    t7 = np.arange(1,substain,-(1-substain)/t4.size)
-    t5 = np.arange(0,(1.00-decay),1.00/sr)
-    t6 = np.concatenate((t3,t7,t5),axis=0)
-    a = ((decay-hold)-0.000001)/(1/sr)
-    print(a)
-   
-
-
-    decayApply = np.where((t > hold) & (t < decay),
-                         holdApply*(t6),
-                         holdApply) 
+    tPreDecay = np.arange(0,(hold),(1.00/sr))
+    tDecay = np.arange(0,decay-hold-0.000001,(1.00/sr))
+    tSubstainDecay = np.arange(1,substain,-(1-substain)/tDecay.size)
+    tPostDecay = np.arange(0,(1.00-decay),1.00/sr)
+    tGlobal = np.concatenate((tPreDecay,tSubstainDecay,tPostDecay),axis=0)
     
-    substainApply = np.where((t > attack) & (t > hold) & (t < decay) | (t >= decay),
-                         decayApply*substain,
-                         decayApply)
-    releaseApply = np.where((t < release) & (t > decay),
-                         substainApply * (t[::-1]*(1/(1-(release-decay)))),
-                         substainApply )
+    decayApply = np.where((t > hold) & (t < decay),
+                         holdApply*(tGlobal),
+                         holdApply)
+    
+    tPreRelease = np.arange(0,(decay),(1.00/sr)) 
+    tRelease = np.arange(0,release-decay,(1.00/sr))
+    tSubstainRelease = np.arange(substain,0,-(substain)/tRelease.size)
+    tPostRelease = np.arange(0,(1.00-release-0.000001),1.00/sr)
+    tGlobal2 = np.concatenate((tPreRelease,tSubstainRelease,tPostRelease),axis=0)
+    
+    releaseApply = np.where((t < release) & (t >= decay),
+                         decayApply * (tGlobal2),
+                         decayApply )
+    
 
     releasePostApply = np.where(t >= release,
-                         decayApply * 0,
-                         releaseApply )                                       
+                         releaseApply * 0,
+                         releaseApply )                                    
     return releasePostApply 
     
 
@@ -80,8 +80,12 @@ def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substa
 def soundLFO ():
     print("LFO")
 
-def soundFilter():
-    print("FILTER")
+"""def soundFilter(Osc,sr,t:Array,cutoff:float,res:float,drive:float):
+ D = np.abs(librosa.stft(y))**2 #Utiliser un spectre d'énergie (magnitude) au lieu d'un spectrogramme de puissance
+    S = librosa.feature.melspectrogram(S=D, sr=Fs, n_mels=128,
+    
+    
+    print("FILTER")"""
 
 def writeSample(sr,signal,path):
     signal*= 32767

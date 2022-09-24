@@ -5,7 +5,7 @@ from time import time_ns
 from timeit import timeit
 import wave
 from xmlrpc.client import DateTime
-
+import csv
 import pygame
 import pandas as pd 
 import numpy as np
@@ -29,7 +29,7 @@ def analyser(conf,instruName):
     
     pathSample = conf.get('InstrumentPath',instruName) + ""
     audio_files = glob(pathSample + '\*.wav')
-
+    print(pathSample)
     y, sr = librosa.load(audio_files[1])
     print(AnalyserDbMax(y))
     
@@ -51,7 +51,7 @@ def analyser(conf,instruName):
     plt.xlabel('Time [Sec]')
     plt.show()
 
-
+    
     #Mel Spectrogram -- Amplitude    / Frequency / Time
     D = np.abs(librosa.stft(y))**2 #Utiliser un spectre d'énergie (magnitude) au lieu d'un spectrogramme de puissance
     S = librosa.feature.melspectrogram(S=D, sr=Fs, n_mels=128,
@@ -75,7 +75,7 @@ def analyser(conf,instruName):
 
     
 
-    import csv
+    
 
     print("Un programme qui utilise csv.writer() pour écrire dans un fichier")
     print("\n")
