@@ -46,6 +46,7 @@ def soundOcs():
 #,attack,hold,decay,substain,release
 def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substain:float,release:float):
     print("ENV")
+    Osc = Osc *1/sr
     attackApply = np.where(t < attack, Osc * (t*(1/attack)),Osc)
     holdApply = np.where((t > attack) & (t < hold), attackApply,attackApply)
     
@@ -80,12 +81,7 @@ def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substa
 def soundLFO ():
     print("LFO")
 
-"""def soundFilter(Osc,sr,t:Array,cutoff:float,res:float,drive:float):
- D = np.abs(librosa.stft(y))**2 #Utiliser un spectre d'énergie (magnitude) au lieu d'un spectrogramme de puissance
-    S = librosa.feature.melspectrogram(S=D, sr=Fs, n_mels=128,
-    
-    
-    print("FILTER")"""
+
 
 def writeSample(sr,signal,path):
     signal*= 32767
