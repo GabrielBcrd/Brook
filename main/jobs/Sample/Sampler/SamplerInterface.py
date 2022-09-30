@@ -41,13 +41,13 @@ output = TextBox(screen, 250, 250, 30, 30, fontSize=24)
 output.disable()  # Act as label instead of textbox
 
 dropdown = Dropdown(
-    screen, 20, 200, 200, 30, name='Select Octave',
+    screen, 20, 200, 200, 30, name='Select wave type',
     choices=[
-        'Red',
-        'Blue',
-        'Yellow',
+        'sin',
+        'square',
+        'triangle',
     ],
-    borderRadius=100, colour=pygame.Color('white'), values=[1, 2, 'true'], direction='down', textHAlign='left'
+    borderRadius=100, colour=pygame.Color('white'), values=['sin', 'square', 'triangle'], direction='down', textHAlign='left'
 )
 output2 = TextBox(screen, 250, 200, 30, 30, fontSize=24)
 output2.disable()  # Act as label instead of textbox
@@ -57,9 +57,7 @@ def print_value():
 
 
 
-
-
-
+#---------------- Events (while run) ---------------
 
 
 run = True
@@ -71,23 +69,23 @@ while run:
             run = False
             quit()
 
+    output.setText(slider.getValue())
 
     screen.fill('gray')
     
     #draw_ocs_noise(sr=sr, freq=freq,screen=screen,screen_location=(0,0))
     #draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,300))
     #draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,0))#
-    draw_ocs_sub(sr=sr, freq=freq,screen=screen,screen_location=(0,300))
 
+    typeOsc=(dropdown.getSelected())
+    print(typeOsc)
+
+    draw_ocs_sub(sr=sr, freq=freq,screen=screen,screen_location=(0,300),typeOsc=typeOsc)
     white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites, active_blacks,
                                                                 screen=screen,width=width,height=height,
                                                                 white_notes=white_notes, black_notes=black_notes,
                                                                 nb_float_black = 23
                                                                 ) 
-
-    output.setText(slider.getValue())
-    output2.setText(dropdown.getSelected())
-
 
 
 

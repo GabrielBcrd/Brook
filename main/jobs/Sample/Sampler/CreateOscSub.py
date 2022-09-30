@@ -16,13 +16,14 @@ def draw_ocs_sub(sr = 44100, # sample rate
             freq = 20,
             lenght =1.0,
             screen=pygame.display.get_surface,
-            screen_location =  (0,0)):
+            screen_location =  (0,0),
+            typeOsc = 'sin'):
     
     t = np.arange(0,lenght,1.0/sr)
     x = np.pi * 2 *freq * t
 
     # ------------- Get signals 
-    signalOcs = soundOcsSub(x=x,case='sin')
+    signalOcs = soundOcsSub(x=x,case=typeOsc)
 
     #------------- Create Graph
     fig = pylab.figure(figsize=[3, 3], # Inches
