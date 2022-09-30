@@ -26,9 +26,10 @@ writeSample(sr=sr,signal=signalEnvelop,path="signalEnvelop.wav")
 signalFilter = soundFilterApply(Osc=signalEnvelop,sr=sr,t=t,cutoff=150.00,filterType = "lowpass")
 writeSample(sr=sr,signal=signalFilter,path="signalFilter.wav")
 
+plt.plot(t,signalSub)
+plt.show()
 
 
-    
 
 
 #A mettre dans un nouveau fichier "SamplerGetParameters"

@@ -51,7 +51,7 @@ def analyser(conf,instruName):
     plt.xlabel('Time [Sec]')
     plt.show()
 
-    
+
     #Mel Spectrogram -- Amplitude    / Frequency / Time
     D = np.abs(librosa.stft(y))**2 #Utiliser un spectre d'énergie (magnitude) au lieu d'un spectrogramme de puissance
     S = librosa.feature.melspectrogram(S=D, sr=Fs, n_mels=128,
@@ -75,7 +75,7 @@ def analyser(conf,instruName):
 
     
 
-    
+    import csv
 
     print("Un programme qui utilise csv.writer() pour écrire dans un fichier")
     print("\n")
