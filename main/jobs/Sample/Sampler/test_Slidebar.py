@@ -6,6 +6,8 @@ from pygame_widgets.textbox import TextBox
 pygame.init()
 win = pygame.display.set_mode((1000, 600))
 
+win.fill('gray')
+
 
 def create_slideBar_Parameters():
     slider = Slider(win, 100, 100, 800, 40, min=0, max=99, step=1)
@@ -24,6 +26,8 @@ while run:
             pygame.quit()
             run = False
             quit()
+
+
 
     output.setText(slider.getValue())
 

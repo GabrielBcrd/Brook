@@ -35,10 +35,6 @@ active_whites = []
 active_blacks = []
 
 
-screen.fill('gray')
-
-
-
 slider = Slider(screen, 20, 250, 200, 20, min=0, max=99, step=1)
 output = TextBox(screen, 250, 250, 30, 30, fontSize=24)
 
@@ -63,16 +59,7 @@ def print_value():
 
 
 
-white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites, active_blacks,
-                                                                screen=screen,width=width,height=height,
-                                                                white_notes=white_notes, black_notes=black_notes,
-                                                                nb_float_black = 23
-                                                                ) 
 
-#draw_ocs_noise(sr=sr, freq=freq,screen=screen,screen_location=(0,0))
-#draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,300))
-#draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,0))#
-draw_ocs_sub(sr=sr, freq=freq,screen=screen,screen_location=(0,300))
 
 
 run = True
@@ -84,8 +71,25 @@ while run:
             run = False
             quit()
 
+
+    screen.fill('gray')
+    
+    #draw_ocs_noise(sr=sr, freq=freq,screen=screen,screen_location=(0,0))
+    #draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,300))
+    #draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,0))#
+    draw_ocs_sub(sr=sr, freq=freq,screen=screen,screen_location=(0,300))
+
+    white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites, active_blacks,
+                                                                screen=screen,width=width,height=height,
+                                                                white_notes=white_notes, black_notes=black_notes,
+                                                                nb_float_black = 23
+                                                                ) 
+
     output.setText(slider.getValue())
     output2.setText(dropdown.getSelected())
+
+
+
 
     pygame_widgets.update(events)
     pygame.display.update()
