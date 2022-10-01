@@ -24,8 +24,10 @@ def soundOcsNoise(lenght,sr,case):
             print("thing is not 1 or 2, There is no Noise")
     return signal 
 
-def soundOcsSub(x,case):
+def soundOcsSub(sr,lenght,freq,case):
     print("SUB")
+    t = np.arange(0,lenght,1.0/sr)
+    x = np.pi * 2 *freq * t
     match case:
         case 'sin':
             signal = np.sin(x)
