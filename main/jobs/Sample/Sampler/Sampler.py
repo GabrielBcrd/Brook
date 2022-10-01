@@ -48,10 +48,41 @@ def soundOcs():
 #,attack,hold,decay,substain,release
 def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substain:float,release:float):
     print("ENV")
-    Osc = Osc *1/sr
-    attackApply = np.where(t < attack, Osc * (t*(1/attack)),Osc)
-    holdApply = np.where((t > attack) & (t < hold), attackApply,attackApply)
+
+    t_attack = np.arange(0,attack,1.00/sr)
+    begin_to_attack = Osc[np.arange(0,len(t_attack),1)]
+    attackApply =  begin_to_attack * np.arange(0,1,1/len(begin_to_attack))
+    a = np.arange(0,1,1/len(begin_to_attack))
+
+
+
+    t_hold = np.arange(attack,hold,1.00/sr)
+    attack_to_hold = Osc[np.arange(len(t_attack),
+                                    len(t_attack)+len(t_hold),1)]
+    holdApply =  attack_to_hold * 1
+    print(len(holdApply))
+
+
+    t_decay = np.arange(hold,decay,1.00/sr)
+    hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
+                                    len(t_decay)+ len(t_hold)+len(t_attack),1)]
+    decayApply = hold_to_decay * np.arange(1,substain,-(1-substain)/(len(t_decay))) 
     
+
+    t_release = np.arange(decay,release,1.00/sr)
+    decay_to_release = Osc[np.arange(len(t_attack)+len(t_hold)+len(t_decay), 
+                                    len(t_release)+len(t_decay)+ len(t_hold)+len(t_attack),1)]
+    releaseApply = decay_to_release * np.arange(substain,0,-(substain)/(len(t_release)))
+
+
+    release_to_end = Osc[np.arange(len(t_attack)+len(t_hold)+len(t_decay)+len(t_release), 
+                                    len(Osc),1)]
+    endApply = release_to_end * 0 
+
+
+    envelop = np.concatenate((attackApply,holdApply,decayApply,releaseApply,endApply))
+
+    """
     tPreDecay = np.arange(0,(hold),(1.00/sr))
     tDecay = np.arange(0,decay-hold-0.000001,(1.00/sr))
     tSubstainDecay = np.arange(1,substain,-(1-substain)/tDecay.size)
@@ -75,13 +106,9 @@ def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substa
 
     releasePostApply = np.where(t >= release,
                          releaseApply * 0,
-                         releaseApply )                                    
-    return releasePostApply 
-    
-
-
-def soundLFO ():
-    print("LFO")
+                         releaseApply )    
+    """
+    return envelop
 
 
 
