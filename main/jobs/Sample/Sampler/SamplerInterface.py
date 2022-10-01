@@ -4,19 +4,18 @@ import pygame
 import pygame_widgets
 
 # sampling information
+from Sampler import *
 from CreatePiano import *
 from CreateOscNoise import draw_ocs_noise
 from CreateOcs import draw_ocs
-from CreateOscSub import draw_ocs_sub
-from pygame_widgets.slider import Slider 
-from pygame_widgets.dropdown import Dropdown 
-from pygame_widgets.button import Button 
-from pygame_widgets.textbox import TextBox 
+from CreateOscSub import *
+from pygame import mixer
+
 
 
 #-----------------variables------------------
 sr = 44100 # sample rate
-freq = 20
+freq = 1
 lenght =1.0
 t = np.arange(0,lenght,1.0/sr)
 x = np.pi * 2 *freq * t
@@ -25,36 +24,52 @@ x = np.pi * 2 *freq * t
 
 #------------------init pygame -------------------------------
 pygame.init()
+mixer.init()
 
 white_notes,black_notes = transform_notes_to_list(nbOctave=8)
 width = len(white_notes) * len(black_notes)
 height = 900
 screen=pygame.display.set_mode([width,height])
 
+#------------------Osc Sub parameters ------------------------
+
+
+sliderMixerVolume,outputMixerVolume,dropdownTypeOsc = draw_OscSubParameters(screen)
+
+#------------------ Piano
+
 active_whites = []
 active_blacks = []
 
+white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites, active_blacks,
+                                                                screen=screen,width=width,height=height,
+                                                                white_notes=white_notes, black_notes=black_notes,
+                                                                nb_float_black = 23
+                                                                ) 
 
-slider = Slider(screen, 20, 250, 200, 20, min=0, max=99, step=1)
-output = TextBox(screen, 250, 250, 30, 30, fontSize=24)
 
-output.disable()  # Act as label instead of textbox
 
-dropdown = Dropdown(
-    screen, 20, 200, 200, 30, name='Select wave type',
-    choices=[
-        'sin',
-        'square',
-        'triangle',
-    ],
-    borderRadius=100, colour=pygame.Color('white'), values=['sin', 'square', 'triangle'], direction='down', textHAlign='left'
-)
-output2 = TextBox(screen, 250, 200, 30, 30, fontSize=24)
-output2.disable()  # Act as label instead of textbox
 
-def print_value():
-    print(dropdown.getSelected())
+#------------------- Submit TextBox
+def outputTxt():
+    # Get text in the textbox
+    freq = int(textboxFrequency.getText())
+    #Loading the song.
+    lenght =1.0
+    signal = soundOcsSub(sr=sr,lenght=lenght, freq=freq,case=dropdownTypeOsc.getSelected())
+    writeSample(sr=44100,signal = signal, path = 'signalSub.wav')
 
+
+    mixer.music.load("signalSub.wav")
+    #Setting the volume.
+    mixer.music.set_volume(sliderMixerVolume.getValue())
+    #Start playing the song.
+    mixer.music.play()
+    
+
+textboxFrequency = TextBox(screen, 300, 100, 800, 80, fontSize=50,
+                  borderColour=(255, 0, 0), textColour=(0, 200, 0),
+                  onSubmit=outputTxt, radius=10, borderThickness=5)
 
 
 #---------------- Events (while run) ---------------
@@ -69,25 +84,22 @@ while run:
             run = False
             quit()
 
-    output.setText(slider.getValue())
+    outputMixerVolume.setText(sliderMixerVolume.getValue())
 
-    screen.fill('gray')
+
     
     #draw_ocs_noise(sr=sr, freq=freq,screen=screen,screen_location=(0,0))
     #draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,300))
     #draw_ocs(sr=sr, freq=freq,screen=screen,screen_location=(300,0))#
 
-    typeOsc=(dropdown.getSelected())
-    print(typeOsc)
 
-    draw_ocs_sub(sr=sr, freq=freq,screen=screen,screen_location=(0,300),typeOsc=typeOsc)
-    white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites, active_blacks,
-                                                                screen=screen,width=width,height=height,
-                                                                white_notes=white_notes, black_notes=black_notes,
-                                                                nb_float_black = 23
-                                                                ) 
+     # ------------- Get Signal 1 to draw Ocs Sub Box
+    typeOsc=(dropdownTypeOsc.getSelected())
+    signalOcs = soundOcsSub(sr=sr,lenght=1,freq = 1,case=typeOsc)
 
-
-
+    draw_ocs_sub(sr=sr,screen=screen,screen_location=(0,300),signal=signalOcs)
+    
+    pygame.draw.rect(screen,"grey",(0,0,300,300),0)
+    
     pygame_widgets.update(events)
     pygame.display.update()
