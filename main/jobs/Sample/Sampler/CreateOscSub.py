@@ -24,7 +24,7 @@ def draw_ocs_sub(sr = 44100, # sample rate
     
     t = np.arange(0,lenght,1.0/sr)
 
-    #------------- Create Graph
+    #Create Graph
     fig = pylab.figure(figsize=[3, 3], # Inches
                     dpi=100,        # 100 dots per inch, resulting buffer is 400x400 pixels
                     )
@@ -40,7 +40,6 @@ def draw_ocs_sub(sr = 44100, # sample rate
     surf = pygame.image.fromstring(raw_data, size, "RGB")
     screen.blit(surf, screen_location)
     pygame.display.flip()
-
 
 
 #--------------------Input Osc Sub Parameters

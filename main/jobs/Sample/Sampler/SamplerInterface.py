@@ -1,3 +1,4 @@
+from re import sub
 from turtle import Screen
 import numpy as np
 import pygame
@@ -8,6 +9,7 @@ from Sampler import *
 from CreatePiano import *
 from CreateOscNoise import draw_ocs_noise
 from CreateOcs import draw_ocs
+from CreateEnvInterface import *
 from CreateOscSub import *
 from pygame import mixer
 
@@ -32,9 +34,9 @@ height = 900
 screen=pygame.display.set_mode([width,height])
 
 #------------------Osc Sub parameters ------------------------
-
-
 sliderMixerVolume,outputMixerVolume,dropdownTypeOsc = draw_OscSubParameters(screen)
+
+Attack,outputAttack,Hold,outputHold,Decay,outputDecay,Substain,outputSubstain,Release,outputRelease = draw_envelopParameters(screen)
 
 #------------------ Piano
 
@@ -47,10 +49,7 @@ white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites,
                                                                 nb_float_black = 23
                                                                 ) 
 
-
-
-
-#------------------- Submit TextBox
+#------------------- Submit TextBox (to play the song)
 def outputTxt():
     # Get text in the textbox
     freq = int(textboxFrequency.getText())
@@ -58,6 +57,13 @@ def outputTxt():
     lenght =1.0
     signal = soundOcsSub(sr=sr,lenght=lenght, freq=freq,case=dropdownTypeOsc.getSelected())
     writeSample(sr=44100,signal = signal, path = 'signalSub.wav')
+
+    signal = soundEnvelopApply(signal,sr=sr,t=t,
+                                attack=Attack.getValue(),
+                                hold=Hold.getValue(),
+                                decay=Decay.getValue(),
+                                substain=Substain.getValue(),
+                                release=Release.getValue())
 
 
     mixer.music.load("signalSub.wav")
@@ -67,7 +73,7 @@ def outputTxt():
     mixer.music.play()
     
 
-textboxFrequency = TextBox(screen, 300, 100, 800, 80, fontSize=50,
+textboxFrequency = TextBox(screen, 700, 100, 800, 80, fontSize=50,
                   borderColour=(255, 0, 0), textColour=(0, 200, 0),
                   onSubmit=outputTxt, radius=10, borderThickness=5)
 
@@ -98,8 +104,18 @@ while run:
     signalOcs = soundOcsSub(sr=sr,lenght=1,freq = 1,case=typeOsc)
 
     draw_ocs_sub(sr=sr,screen=screen,screen_location=(0,300),signal=signalOcs)
-    
+
     pygame.draw.rect(screen,"grey",(0,0,300,300),0)
-    
+
+    attack = Attack.getValue()
+    hold = Hold.getValue()
+    decay = Decay.getValue()
+    substain = Substain.getValue()
+    releas = Release.getValue()
+
+    draw_env(sr=sr,lenght=lenght,screen=screen,screen_location=(300,300),attack=attack,hold=hold,decay=decay,substain=substain,release=releas)
+
+    pygame.draw.rect(screen,"grey",(310,0,300,300),0)
+
     pygame_widgets.update(events)
     pygame.display.update()
