@@ -2,6 +2,7 @@ from multiprocessing.dummy import Array
 from platform import release
 import numpy as np
 from scipy.io import wavfile
+import wave as wave
 from numpy import where
 
 def normalizeSound(data):
@@ -115,5 +116,11 @@ def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substa
 def writeSample(sr,signal,path):
     signal*= 32767
     signal = np.int16(signal)
-    wavfile.write(path,sr,signal)
+    wav_file = wave.open(path,'w')
+    wav_file.setnchannels(1)
+    wav_file.setsampwidth(1)
+    wav_file.setframerate(sr)
+    wav_file.writeframesraw(signal)
+    wav_file.close
+    #wavfile.write(path,sr,signal)
 

@@ -2,7 +2,7 @@ from re import sub
 from turtle import Screen
 import numpy as np
 import pygame
-import pygame_widgets
+import pygame_widgets 
 
 # sampling information
 from Sampler import *
@@ -51,6 +51,8 @@ white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites,
 
 #------------------- Submit TextBox (to play the song)
 def outputTxt():
+    #Unload the last song :)
+    mixer.music.unload()
     # Get text in the textbox
     freq = int(textboxFrequency.getText())
     #Loading the song.
@@ -71,6 +73,8 @@ def outputTxt():
     mixer.music.set_volume(sliderMixerVolume.getValue())
     #Start playing the song.
     mixer.music.play()
+    
+    
     
 
 textboxFrequency = TextBox(screen, 700, 100, 800, 80, fontSize=50,
