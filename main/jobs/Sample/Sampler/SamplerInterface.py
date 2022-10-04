@@ -12,6 +12,8 @@ from CreateOcs import draw_ocs
 from CreateEnvInterface import *
 from CreateOscSub import *
 from pygame import mixer
+from CreateWidget import *
+from CreateWidget import draw_knobman
 
 
 
@@ -21,7 +23,7 @@ freq = 1
 lenght =1.0
 t = np.arange(0,lenght,1.0/sr)
 x = np.pi * 2 *freq * t
-
+data = 20
 
 
 #------------------init pygame -------------------------------
@@ -93,6 +95,12 @@ while run:
             pygame.quit()
             run = False
             quit()
+            
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            button = draw_knobman(screen=screen,x=20,y=20,data = data,color="blue")
+            if button.collidepoint():
+                data == data + 1
 
     outputMixerVolume.setText(sliderMixerVolume.getValue())
 
@@ -108,9 +116,14 @@ while run:
     signalOcs = soundOcsSub(sr=sr,lenght=1,freq = 1,case=typeOsc)
 
     draw_ocs_sub(sr=sr,screen=screen,screen_location=(0,300),signal=signalOcs)
-
+    
     pygame.draw.rect(screen,"grey",(0,0,300,300),0)
+    
+    
+    draw_knobman(screen=screen,x=20,y=20,data=20,color="blue")
 
+    
+    
     attack = Attack.getValue()
     hold = Hold.getValue()
     decay = Decay.getValue()
@@ -123,3 +136,6 @@ while run:
 
     pygame_widgets.update(events)
     pygame.display.update()
+
+
+    
