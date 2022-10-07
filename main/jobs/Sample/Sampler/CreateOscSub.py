@@ -1,16 +1,15 @@
-from turtle import Screen
+from turtle import Screen, color
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.backends.backend_agg as agg
 import pygame
-from pygame.locals import *
 import pylab
 import numpy as np
 from pygame_widgets.slider import Slider 
 from pygame_widgets.dropdown import Dropdown 
 from pygame_widgets.button import Button 
 from pygame_widgets.textbox import TextBox 
-
+from pygame_widgets.sliderKnobman import SliderKnobman
 from CreatePiano import *
 
 
@@ -44,8 +43,8 @@ def draw_ocs_sub(sr = 44100, # sample rate
 
 #--------------------Input Osc Sub Parameters
 def draw_OscSubParameters(screen):
-    sliderMixerVolume = Slider(screen, 20, 250, 200, 20, min=0, max=1, step=0.01)
-    outputMixerVolume = TextBox(screen, 250, 250, 30, 30, fontSize=12)
+    sliderMixerVolume = SliderKnobman(screen, 40, 40, 200, 40, min=0, max=99, step=1,handleColour = (0,0,210))
+    outputMixerVolume = TextBox(screen, 250, 40, 30, 30, fontSize=12)
 
 
     dropdownTypeOsc = Dropdown(

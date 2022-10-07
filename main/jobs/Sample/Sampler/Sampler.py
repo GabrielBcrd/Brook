@@ -26,7 +26,6 @@ def soundOcsNoise(lenght,sr,case):
     return signal 
 
 def soundOcsSub(sr,lenght,freq,case):
-    print("SUB")
     t = np.arange(0,lenght,1.0/sr)
     x = np.pi * 2 *freq * t
     match case:
@@ -48,27 +47,39 @@ def soundOcs():
 
 #,attack,hold,decay,substain,release
 def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substain:float,release:float):
-    print("ENV")
 
     t_attack = np.arange(0,attack,1.00/sr)
-    begin_to_attack = Osc[np.arange(0,len(t_attack),1)]
-    attackApply =  begin_to_attack * np.arange(0,1,1/len(begin_to_attack))
-    a = np.arange(0,1,1/len(begin_to_attack))
+    try:
+        begin_to_attack = Osc[np.arange(0,len(t_attack),1)]
+        attackApply =  begin_to_attack * np.arange(0,1,1/len(begin_to_attack))
+    except:
+        begin_to_attack = Osc[np.arange(0,len(t_attack)+(1/sr),1)]
+        attackApply =  begin_to_attack * np.arange(0,1,1/len(begin_to_attack))
+   
 
-
-
-    t_hold = np.arange(attack,hold,1.00/sr)
-    attack_to_hold = Osc[np.arange(len(t_attack),
+    try:
+        t_hold = np.arange(attack,hold,1.00/sr)
+        attack_to_hold = Osc[np.arange(len(t_attack),
                                     len(t_attack)+len(t_hold),1)]
-    holdApply =  attack_to_hold * 1
-    print(len(holdApply))
+        holdApply =  attack_to_hold * 1
+    except:
+        t_hold = np.arange(attack,hold+(1/sr),1.00/sr)
+        attack_to_hold = Osc[np.arange(len(t_attack),
+                                    len(t_attack)+len(t_hold),1)]
+        holdApply =  attack_to_hold * 1
 
 
     t_decay = np.arange(hold,decay,1.00/sr)
-    hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
+    try:
+        hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
                                     len(t_decay)+ len(t_hold)+len(t_attack),1)]
-    decayApply = hold_to_decay * np.arange(1,substain,-(1-substain)/(len(t_decay))) 
-    
+        decayApply = hold_to_decay * np.arange(1,substain,-(1-substain)/(len(t_decay))) 
+
+    except:
+        hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
+                                    len(t_decay)+ len(t_hold)+len(t_attack),int(1+(1/sr)))]
+        decayApply = hold_to_decay * np.arange(1,substain,-(1-substain)/(len(t_decay))) 
+
 
     t_release = np.arange(decay,release,1.00/sr)
     decay_to_release = Osc[np.arange(len(t_attack)+len(t_hold)+len(t_decay), 
@@ -82,6 +93,8 @@ def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substa
 
 
     envelop = np.concatenate((attackApply,holdApply,decayApply,releaseApply,endApply))
+
+    print(envelop.shape)
 
     """
     tPreDecay = np.arange(0,(hold),(1.00/sr))

@@ -13,7 +13,6 @@ from CreateEnvInterface import *
 from CreateOscSub import *
 from pygame import mixer
 from CreateWidget import *
-from CreateWidget import draw_knobman
 
 
 
@@ -50,6 +49,7 @@ white_keys, black_keys, active_whites, active_blacks = draw_piano(active_whites,
                                                                 white_notes=white_notes, black_notes=black_notes,
                                                                 nb_float_black = 23
                                                                 ) 
+
 
 #------------------- Submit TextBox (to play the song)
 def outputTxt():
@@ -96,13 +96,8 @@ while run:
             run = False
             quit()
             
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            button = draw_knobman(screen=screen,x=20,y=20,data = data,color="blue")
-            if button.collidepoint():
-                data == data + 1
-
-    outputMixerVolume.setText(sliderMixerVolume.getValue())
+       
+    outputMixerVolume.setText(sliderMixerVolume.getValue()/100)
 
 
     
@@ -120,22 +115,16 @@ while run:
     pygame.draw.rect(screen,"grey",(0,0,300,300),0)
     
     
-    draw_knobman(screen=screen,x=20,y=20,data=20,color="blue")
+    attack = Attack.getValue()/100
+    hold = Hold.getValue()/100
+    decay = Decay.getValue()/100
+    substain = Substain.getValue()/100
+    releas = Release.getValue()/100
 
+    draw_env(sr=sr,lenght=lenght,screen=screen,screen_location=(600,600),attack=attack,hold=hold,decay=0.6,substain=0.5,release=0.99)
     
-    
-    attack = Attack.getValue()
-    hold = Hold.getValue()
-    decay = Decay.getValue()
-    substain = Substain.getValue()
-    releas = Release.getValue()
+    pygame.draw.rect(screen,(0,0,0),(310,0,300,500),0)
 
-    draw_env(sr=sr,lenght=lenght,screen=screen,screen_location=(300,300),attack=attack,hold=hold,decay=decay,substain=substain,release=releas)
-
-    pygame.draw.rect(screen,"grey",(310,0,300,300),0)
 
     pygame_widgets.update(events)
     pygame.display.update()
-
-
-    

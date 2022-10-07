@@ -3,10 +3,10 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.backends.backend_agg as agg
 import pygame
-from pygame.locals import *
 import pylab
 import numpy as np
-from pygame_widgets.slider import Slider 
+from pygame_widgets.sliderKnobman import SliderKnobman
+from pygame_widgets.slider import Slider
 from pygame_widgets.dropdown import Dropdown 
 from pygame_widgets.button import Button 
 from pygame_widgets.textbox import TextBox 
@@ -35,9 +35,9 @@ def draw_env(sr = 44100, # sample rate
                     dpi=100,        # 100 dots per inch, resulting buffer is 400x400 pixels
                     )
 
-    Osc = np.zeros(shape=44100)
+    #Create 
+    Osc = np.zeros(shape=sr)
     Osc2 = np.where(Osc == 0,1,1)
-    print (Osc2)
     envelop = soundEnvelopApply(Osc2,sr,t=t,attack = attack,hold=hold,decay=decay,substain=substain,release=release)
 
     ax = fig.gca()
@@ -56,21 +56,23 @@ def draw_env(sr = 44100, # sample rate
 
 #--------------------Input Osc Sub Parameters
 def draw_envelopParameters(screen):
-    sliderAttack = Slider(screen, 320, 0, 200, 20,initial = 0.01,min=0.01, max=0.99, step=0.01)
+    sliderAttack = SliderKnobman(screen, 380, 40, 200, 40,initial = 0,min=0, max=99, step=1)
     outputAttack = TextBox(screen, 580, 0, 30, 30, fontSize=12)
     
-    sliderHold = Slider(screen, 320, 50, 200, 20,initial = 0.2, min=0.01, max=0.99, step=0.01)
+    sliderHold = SliderKnobman(screen, 380, 120, 200, 40,initial = 20,min=0, max=99, step=1)
     outputHold = TextBox(screen, 580, 50, 30, 30, fontSize=12)
     sliderHold.set(sliderAttack,value =0)
 
-    sliderSubstain = Slider(screen, 320, 150, 200, 20, min=0.01, max=0.99, step=0.01)
+    sliderSubstain = SliderKnobman(screen, 380, 200, 200, 40,initial = 50,min=0, max=99, step=1)
     outputSubstain = TextBox(screen, 580, 150, 30, 30, fontSize=12)
 
-    sliderDecay = Slider(screen, 320, 100, 200, 20, min=0.01, max=0.99, step=0.01)
+    sliderDecay = SliderKnobman(screen, 380, 280, 200, 40,initial = 50 ,min=0, max=99, step=1)
     outputDecay = TextBox(screen, 580, 100, 30, 30, fontSize=12)
 
-    sliderRelease = Slider(screen, 320, 250, 200, 20,initial = 0.99, min=0.01, max=0.99, step=0.30)
+    sliderRelease = SliderKnobman(screen, 380, 360, 200, 40,initial = 0.99,min=0, max=99, step=1)
     outputRelease = TextBox(screen, 580, 250, 30, 30, fontSize=12)
+    sliderHold.set(sliderAttack,value =99)
+
 
     return sliderAttack,outputAttack,sliderHold,outputHold,sliderDecay,outputDecay,sliderSubstain,outputSubstain,sliderRelease,outputRelease
 
