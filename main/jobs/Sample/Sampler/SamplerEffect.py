@@ -6,7 +6,7 @@ import librosa
 import pyaudio
 import matplotlib.pyplot as plt
 
-def soundFilterApply(Osc,sr,t,cutoff,filterType):
+def soundFilterApply(Osc,sr,cutoff,filterType):
     print("FILTER")
 
     b, a = signal.butter(4, cutoff, filterType, analog=True)
@@ -21,22 +21,13 @@ def soundFilterApply(Osc,sr,t,cutoff,filterType):
     plt.axvline(cutoff, color='green') # cutoff frequency
     plt.show()
 
-    sig = Osc * 1/sr
-    t = t
-    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
-    ax1.plot(t, sig)
-    ax1.set_title('SignalBefore')
-
-
+    """     sig = Osc * 1/sr
     #btype{‘lowpass’, ‘highpass’, ‘bandpass’, ‘bandstop’}, optional The type of filter. Default is ‘lowpass’.
     sos = signal.butter(4, cutoff, filterType, fs=sr, output='sos')
-    filtered = signal.sosfilt(sos, sig)
-    ax2.plot(t, filtered)
-    ax2.set_title('After filter')
-    ax2.set_xlabel('Time [seconds]')
-    plt.tight_layout()
-    plt.show()
-    return filtered
+    filtered = signal.sosfilt(sos, sig) """
+    filtered = Osc
+
+    return filtered, w, h
 
 def soundPitchApply(signal,sr):
     

@@ -46,83 +46,43 @@ def soundOcs():
     print("OSC")
 
 #,attack,hold,decay,substain,release
-def soundEnvelopApply(Osc,sr,t:Array,attack:float, hold:float,decay:float,substain:float,release:float):
+def soundEnvelopApply(Osc,sr,attack:float, hold:float,decay:float,substain:float,release:float):
 
     t_attack = np.arange(0,attack,1.00/sr)
-    try:
-        begin_to_attack = Osc[np.arange(0,len(t_attack),1)]
-        attackApply =  begin_to_attack * np.arange(0,1,1/len(begin_to_attack))
-    except:
-        begin_to_attack = Osc[np.arange(0,len(t_attack)+(1/sr),1)]
-        attackApply =  begin_to_attack * np.arange(0,1,1/len(begin_to_attack))
-   
-
-    try:
-        t_hold = np.arange(attack,hold,1.00/sr)
-        attack_to_hold = Osc[np.arange(len(t_attack),
+    begin_to_attack = Osc[np.arange(0,len(t_attack),1)]
+    
+    t_hold = np.arange(attack,hold,1.00/sr)
+    attack_to_hold = Osc[np.arange(len(t_attack),
                                     len(t_attack)+len(t_hold),1)]
-        holdApply =  attack_to_hold * 1
-    except:
-        t_hold = np.arange(attack,hold+(1/sr),1.00/sr)
-        attack_to_hold = Osc[np.arange(len(t_attack),
-                                    len(t_attack)+len(t_hold),1)]
-        holdApply =  attack_to_hold * 1
-
 
     t_decay = np.arange(hold,decay,1.00/sr)
-    try:
-        hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
-                                    len(t_decay)+ len(t_hold)+len(t_attack),1)]
-        decayApply = hold_to_decay * np.arange(1,substain,-(1-substain)/(len(t_decay))) 
-
-    except:
-        hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
-                                    len(t_decay)+ len(t_hold)+len(t_attack),int(1+(1/sr)))]
-        decayApply = hold_to_decay * np.arange(1,substain,-(1-substain)/(len(t_decay))) 
+    hold_to_decay = Osc[np.arange(len(t_attack)+len(t_hold), 
+                                        len(t_decay)+ len(t_hold)+len(t_attack),1)]
 
 
     t_release = np.arange(decay,release,1.00/sr)
     decay_to_release = Osc[np.arange(len(t_attack)+len(t_hold)+len(t_decay), 
                                     len(t_release)+len(t_decay)+ len(t_hold)+len(t_attack),1)]
-    releaseApply = decay_to_release * np.arange(substain,0,-(substain)/(len(t_release)))
-
 
     release_to_end = Osc[np.arange(len(t_attack)+len(t_hold)+len(t_decay)+len(t_release), 
                                     len(Osc),1)]
-    endApply = release_to_end * 0 
+
+    envelopNumMatrix = np.concatenate((np.arange(0,1,1/len(begin_to_attack)),
+                                        attack_to_hold,
+                                        np.arange(1,substain,-(1-substain)/(len(t_decay))),
+                                        np.arange(substain,0,-(substain)/(len(t_release))),
+                                        release_to_end*0))
+
+
+    
+    """ 
+    releaseApply = decay_to_release * 
 
 
     envelop = np.concatenate((attackApply,holdApply,decayApply,releaseApply,endApply))
-
-    print(envelop.shape)
-
     """
-    tPreDecay = np.arange(0,(hold),(1.00/sr))
-    tDecay = np.arange(0,decay-hold-0.000001,(1.00/sr))
-    tSubstainDecay = np.arange(1,substain,-(1-substain)/tDecay.size)
-    tPostDecay = np.arange(0,(1.00-decay),1.00/sr)
-    tGlobal = np.concatenate((tPreDecay,tSubstainDecay,tPostDecay),axis=0)
-    
-    decayApply = np.where((t > hold) & (t < decay),
-                         holdApply*(tGlobal),
-                         holdApply)
-    
-    tPreRelease = np.arange(0,(decay),(1.00/sr)) 
-    tRelease = np.arange(0,release-decay,(1.00/sr))
-    tSubstainRelease = np.arange(substain,0,-(substain)/tRelease.size)
-    tPostRelease = np.arange(0,(1.00-release-0.000001),1.00/sr)
-    tGlobal2 = np.concatenate((tPreRelease,tSubstainRelease,tPostRelease),axis=0)
-    
-    releaseApply = np.where((t < release) & (t >= decay),
-                         decayApply * (tGlobal2),
-                         decayApply )
-    
 
-    releasePostApply = np.where(t >= release,
-                         releaseApply * 0,
-                         releaseApply )    
-    """
-    return envelop
+    return envelopNumMatrix
 
 
 
