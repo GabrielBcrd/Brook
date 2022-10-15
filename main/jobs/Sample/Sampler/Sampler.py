@@ -67,20 +67,12 @@ def soundEnvelopApply(Osc,sr,attack:float, hold:float,decay:float,substain:float
     release_to_end = Osc[np.arange(len(t_attack)+len(t_hold)+len(t_decay)+len(t_release), 
                                     len(Osc),1)]
 
+
     envelopNumMatrix = np.concatenate((np.arange(0,1,1/len(begin_to_attack)),
-                                        attack_to_hold,
-                                        np.arange(1,substain,-(1-substain)/(len(t_decay))),
-                                        np.arange(substain,0,-(substain)/(len(t_release))),
-                                        release_to_end*0))
-
-
-    
-    """ 
-    releaseApply = decay_to_release * 
-
-
-    envelop = np.concatenate((attackApply,holdApply,decayApply,releaseApply,endApply))
-    """
+                                            attack_to_hold,
+                                            np.arange(1,substain,-(1-substain)/(len(t_decay))),
+                                            np.arange(substain,0,-(substain)/(len(t_release))),
+                                            release_to_end*0))
 
     return envelopNumMatrix
 

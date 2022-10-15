@@ -1,6 +1,4 @@
-from turtle import Screen
 import matplotlib
-matplotlib.use("Agg")
 import matplotlib.backends.backend_agg as agg
 import pygame
 import pylab
